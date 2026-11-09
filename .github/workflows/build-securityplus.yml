@@ -1,0 +1,31 @@
+name: Build Bruce Security+ for T-Embed CC1101
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Bruce with Security+ support
+        uses: actions/checkout@v4
+        with:
+          repository: Geeblish/firmware
+          ref: codex/security-plus-rolling-remotes
+          path: firmware
+
+      - name: Build T-Embed CC1101 firmware
+        working-directory: firmware
+        run: |
+          docker compose run --rm platformio_build bash -lc 'pio run -e lilygo-t-embed-cc1101 -t build-firmware'
+
+      - name: Upload firmware
+        uses: actions/upload-artifact@v4
+        with:
+          name: Bruce-SecurityPlus-lilygo-t-embed-cc1101
+          path: firmware/Bruce-lilygo-t-embed-cc1101.bin
+          if-no-files-found: error
+          retention-days: 14
