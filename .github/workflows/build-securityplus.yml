@@ -19,9 +19,7 @@ jobs:
 
       - name: Build T-Embed CC1101 firmware
         working-directory: firmware
-        run: |
-          docker compose run --rm platformio_build bash -lc 'pio run -e lilygo-t-embed-cc1101 -t build-firmware'
-
+        run: docker compose run --rm platformio_build bash -lc 
       - name: Upload firmware
         uses: actions/upload-artifact@v4
         with:
