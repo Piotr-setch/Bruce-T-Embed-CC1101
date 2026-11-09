@@ -1,3 +1,4 @@
+
 name: Build Bruce Security+ for T-Embed CC1101
 
 on:
@@ -19,7 +20,9 @@ jobs:
 
       - name: Build T-Embed CC1101 firmware
         working-directory: firmware
-        run: docker compose run --rm platformio_build bash -lc 
+        run: |
+          docker compose run --rm platformio_build bash -lc "git config --global --add safe.directory /work && pio run -e lilygo-t-embed-cc1101 -t build-firmware"
+
       - name: Upload firmware
         uses: actions/upload-artifact@v4
         with:
