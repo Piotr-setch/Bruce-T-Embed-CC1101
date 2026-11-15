@@ -1,33 +1,15 @@
 
-
-name: Build Bruce Security+ for T-Embed CC1101
-
-on:
-  workflow_dispatch:
-
-permissions:
-  contents: read
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Bruce with Security+ support
-        uses: actions/checkout@v4
-        with:
-          repository: Geeblish/firmware
-          ref: codex/security-plus-rolling-remotes
-          path: firmware
-          fetch-depth: 0
-
-      - name: Apply Bruce PR #3086 changes
+      - name: Merge Bruce upstream and PR #3086
         working-directory: firmware
         run: |
           set -e
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git remote add bruce-upstream https://github.com/BruceDevices/firmware.git
           git fetch bruce-upstream dev
           git fetch bruce-upstream pull/3086/head:refs/remotes/bruce-upstream/pr-3086
-          git diff --binary bruce-upstream/dev...refs/remotes/bruce-upstream/pr-3086 | git apply --3way
+          git merge --no-edit bruce-upstream/dev
+          git merge --no-edit refs/remotes/bruce-upstream/pr-3086
 
       - name: Build T-Embed CC1101 firmware
         working-directory: firmware
