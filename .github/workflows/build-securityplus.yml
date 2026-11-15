@@ -1,4 +1,5 @@
 
+
 name: Build Bruce Security+ for T-Embed CC1101
 
 on:
@@ -17,6 +18,16 @@ jobs:
           repository: Geeblish/firmware
           ref: codex/security-plus-rolling-remotes
           path: firmware
+          fetch-depth: 0
+
+      - name: Apply Bruce PR #3086 changes
+        working-directory: firmware
+        run: |
+          set -e
+          git remote add bruce-upstream https://github.com/BruceDevices/firmware.git
+          git fetch bruce-upstream dev
+          git fetch bruce-upstream pull/3086/head:refs/remotes/bruce-upstream/pr-3086
+          git diff --binary bruce-upstream/dev...refs/remotes/bruce-upstream/pr-3086 | git apply --3way
 
       - name: Build T-Embed CC1101 firmware
         working-directory: firmware
@@ -26,7 +37,7 @@ jobs:
       - name: Upload firmware
         uses: actions/upload-artifact@v4
         with:
-          name: Bruce-SecurityPlus-lilygo-t-embed-cc1101
+          name: Bruce-SecurityPlus-PR3086-lilygo-t-embed-cc1101
           path: firmware/Bruce-lilygo-t-embed-cc1101.bin
           if-no-files-found: error
           retention-days: 14
